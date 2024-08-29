@@ -1,0 +1,9 @@
+.input-text-container{
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    width: 400px;
+}
+.input-number{
+    width: 400px;
+}
