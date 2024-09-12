@@ -1,0 +1,9 @@
+.text-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.text-container p{
+    font-size: 24px;
+    font-weight: 500;
+}

@@ -4,24 +4,22 @@ import { Form, Input, Button, DatePicker, Select, InputNumber } from 'antd';
 import FormItem from '../Input/FormItem';
 import useYupValidationResolver from '../../hook/useYupValidationresolver';
 import { schemaValidation } from './validationSchema';
-import { useContext, useEffect } from 'react';
+import { useContext, useState} from 'react';
 import './CreatEmployeeForm.css'
-import {UsersContext} from '../../Router.tsx';
 import SelectData from '../../selectData.json'
+import { UsersContext } from '../../context/UsersContext';
+import { User } from '../../types';
+import Modal from '../Modal/ModalComponent';
+import dayjs from 'dayjs';
 
-
-type FormProps = {
-    defaultValue?: string
-}
-
-
-function CreateEmployeeForm({ defaultValue}: FormProps) {
+function CreateEmployeeForm() {
 
     const resolver = useYupValidationResolver(schemaValidation);
-    const { control, handleSubmit, setValue, reset } = useForm({
+    const [open, setIsOpen] = useState(false);
+    const { control, handleSubmit, reset } = useForm({
             resolver,
             mode: 'onChange',         
-            reValidateMode: 'onChange' 
+            reValidateMode: 'onChange', 
         });
     const usersContext = useContext(UsersContext);
 
@@ -29,34 +27,29 @@ function CreateEmployeeForm({ defaultValue}: FormProps) {
         throw new Error('usersContext must be used within a UsersContext.Provider');
     }
 
-    const { users, setUsers } = usersContext;
+    const {addUser } = usersContext;
 
-    useEffect(() => {
-        if (defaultValue) {
-            setValue("label", defaultValue);
-        }
-    }, [defaultValue]);
-
-    const handleSubmitForm = (data: any) => {
-        console.log(data);
+    
+    const handleSubmitForm = (data: User) => {
         const newUser = {
-            Id: users.length + 1, // Assurez-vous que l'id est unique
             FirstName: data.FirstName,
             LastName: data.LastName,
-            DateOfBirth: new Date(data.DateOfBirth),
-            StartDate: new Date(data.StartDate),
+            DateOfBirth: dayjs(data.DateOfBirth).toDate(),
+            StartDate: dayjs(data.StartDate).toDate(),
             Street:data.Street,
             City: data.City,
             State: data.State,
             ZipCode: data.ZipCode,
             Department: data.Department,
-    };
-        setUsers([...users, newUser]);
+    }as User;
+        addUser(newUser);
         reset();
+        setIsOpen(true);
+        
     };
     return (
         <div>
-             <Form form={Form.useForm()[0]} onFinish={handleSubmit(handleSubmitForm)} className="form-container">
+             <Form  onFinish={handleSubmit(handleSubmitForm)} className="form-container">
                 <Controller 
                     control={control}
                     name="FirstName"
@@ -65,7 +58,7 @@ function CreateEmployeeForm({ defaultValue}: FormProps) {
                             <Input
                                 value={value}
                                 onChange={e => onChange(e.target.value)}
-                                name="label"
+                                name="FirstName"
                                 status={error ? 'error' : ''}
                             />
                         </FormItem>
@@ -79,7 +72,7 @@ function CreateEmployeeForm({ defaultValue}: FormProps) {
                             <Input
                                 value={value}
                                 onChange={e => onChange(e.target.value)}
-                                name="lastName"
+                                name="LastName"
                                 status={error ? 'error' : ''}
                             />
                         </FormItem>
@@ -188,7 +181,12 @@ function CreateEmployeeForm({ defaultValue}: FormProps) {
                     />
                 <Button type="primary" htmlType="submit">Save</Button>
             </Form>
+            <Modal setIsOpen={setIsOpen} open={open}>
+                <p>Success</p>
+            </Modal>
+
         </div>
+        
     )
 }
 
