@@ -4,9 +4,9 @@ import { UsersContext } from '../../context/UsersContext';
 const { Option } = Select;
 const { Search } = Input;
 import {User} from '../../types/index'
-
 import './TabEmployees.css'
-import dayjs from 'dayjs';
+import { Dayjs } from 'dayjs';
+
 
 
  const tableColumns = [
@@ -26,8 +26,11 @@ import dayjs from 'dayjs';
         title: 'Start Date',
         dataIndex: 'StartDate',
         key: 'StartDate',
-        sorter: (a: User, b: User) => new Date(a.StartDate).getTime() - new Date(b.StartDate).getTime(),
-        render: (text: string, record: User) => (<p>{dayjs(record.StartDate).format("MM/DD/YYYY")}</p>)
+        sorter: (a: User, b: User) => a.StartDate.unix() - b.StartDate.unix(),
+        render: (value: Dayjs) => {
+            console.log(value)
+            return (<p>{value.format("MM/DD/YYYY")}</p>)
+        }
     },
     {
         title: 'Department',
@@ -39,8 +42,8 @@ import dayjs from 'dayjs';
         title: 'Date of Birth',
         dataIndex: 'DateOfBirth',
         key: 'DateOfBirth',
-        sorter: (a: User, b: User) => new Date(a.DateOfBirth).getTime() - new Date(b.DateOfBirth).getTime(),
-        render: (text: string, record: User) => (<p>{dayjs(record.DateOfBirth).format("MM/DD/YYYY")}</p>)
+        sorter: (a: User, b: User) => a.DateOfBirth.unix() - b.DateOfBirth.unix(),
+        render: (value: Dayjs) =>  (<p>{value.format("MM/DD/YYYY")}</p>)
     },
     {
         title: 'Street',

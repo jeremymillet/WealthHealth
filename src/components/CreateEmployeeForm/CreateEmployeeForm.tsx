@@ -9,8 +9,9 @@ import './CreatEmployeeForm.css'
 import SelectData from '../../selectData.json'
 import { UsersContext } from '../../context/UsersContext';
 import { User } from '../../types';
-import Modal from '../Modal/ModalComponent';
 import dayjs from 'dayjs';
+import { ModalComponent } from "modalopjm"
+
 
 function CreateEmployeeForm() {
 
@@ -34,8 +35,8 @@ function CreateEmployeeForm() {
         const newUser = {
             FirstName: data.FirstName,
             LastName: data.LastName,
-            DateOfBirth: dayjs(data.DateOfBirth).toDate(),
-            StartDate: dayjs(data.StartDate).toDate(),
+            DateOfBirth: dayjs(data.DateOfBirth),
+            StartDate: dayjs(data.StartDate),
             Street:data.Street,
             City: data.City,
             State: data.State,
@@ -45,6 +46,7 @@ function CreateEmployeeForm() {
         addUser(newUser);
         reset();
         setIsOpen(true);
+        console.log(newUser);
         
     };
     return (
@@ -181,9 +183,9 @@ function CreateEmployeeForm() {
                     />
                 <Button type="primary" htmlType="submit">Save</Button>
             </Form>
-            <Modal setIsOpen={setIsOpen} open={open}>
+            <ModalComponent setIsOpen={setIsOpen} open={open}>
                 <p>Success</p>
-            </Modal>
+            </ModalComponent>
 
         </div>
         
