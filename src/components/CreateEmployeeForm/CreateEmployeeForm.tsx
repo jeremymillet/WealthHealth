@@ -21,7 +21,7 @@ function CreateEmployeeForm() {
             resolver,
             mode: 'onChange',         
             reValidateMode: 'onChange', 
-        });
+    });
     const usersContext = useContext(UsersContext);
 
     if (!usersContext) {

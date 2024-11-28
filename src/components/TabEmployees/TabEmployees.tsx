@@ -1,14 +1,21 @@
-import { useContext, useState } from 'react';
-import { Table, Select, Input, Pagination } from 'antd';
-import { UsersContext } from '../../context/UsersContext';
+import { /*useContext,*/ useState } from 'react';
+import { Table, Select, Input} from 'antd';
+/*import { UsersContext } from '../../context/UsersContext';*/
 const { Option } = Select;
 const { Search } = Input;
 import {User} from '../../types/index'
 import './TabEmployees.css'
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
+import data from '../../selectData.json'
 
+const dataSource: User[] = data.dataSource.map(user => ({
+  ...user,
+  Id: Number(user.Id),
+  StartDate: dayjs(user.StartDate), 
+  DateOfBirth: dayjs(user.DateOfBirth),
+  ZipCode : Number(user.ZipCode),
 
-
+}));
  const tableColumns = [
     {
         title: 'First Name',
@@ -28,7 +35,6 @@ import { Dayjs } from 'dayjs';
         key: 'StartDate',
         sorter: (a: User, b: User) => a.StartDate.unix() - b.StartDate.unix(),
         render: (value: Dayjs) => {
-            console.log(value)
             return (<p>{value.format("MM/DD/YYYY")}</p>)
         }
     },
@@ -43,7 +49,7 @@ import { Dayjs } from 'dayjs';
         dataIndex: 'DateOfBirth',
         key: 'DateOfBirth',
         sorter: (a: User, b: User) => a.DateOfBirth.unix() - b.DateOfBirth.unix(),
-        render: (value: Dayjs) =>  (<p>{value.format("MM/DD/YYYY")}</p>)
+        render: (value: Dayjs) => (<p>{value.format("MM/DD/YYYY")}</p>)
     },
     {
         title: 'Street',
@@ -72,8 +78,8 @@ import { Dayjs } from 'dayjs';
 ];
 
 function TabEmployees() {
-    const usersContext = useContext(UsersContext);
-    const { users } = usersContext;
+    /*const usersContext = useContext(UsersContext);*/
+   /* const { users } = usersContext;*/
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [pageSize, setPageSize] = useState(10);
     const [searchText, setSearchText] = useState('');
@@ -87,7 +93,8 @@ function TabEmployees() {
         setSearchText(value.toLowerCase());
     };
 
-    const filteredUsers = users.filter(user =>
+    
+    const filteredUsers = dataSource.filter(user =>
         Object.values(user).some(val =>
             typeof val === 'string' && val.toLowerCase().includes(searchText)
         )
@@ -95,8 +102,6 @@ function TabEmployees() {
 
     const sortUsers = filteredUsers;
    
-
-    
     return (
         <div>
             <div className="header-table-container">
@@ -116,7 +121,12 @@ function TabEmployees() {
             <Table
                 dataSource={sortUsers}
                 columns={tableColumns}
-                pagination={false}
+                pagination={{
+                    current: currentPage,
+                    pageSize: pageSize,
+                    total: filteredUsers.length,
+                    onChange: setCurrentPage,
+                }}
                 bordered
                 rowKey="id"
                 locale={{ emptyText: 'No data available in table' }}
@@ -128,12 +138,7 @@ function TabEmployees() {
                         sortUsers.length
                     )} of ${sortUsers.length} entries`}
                 </div>
-                <Pagination
-                    current={currentPage}
-                    total={sortUsers.length}
-                    pageSize={pageSize}
-                    onChange={setCurrentPage}
-                />
+                
             </div>
         </div>
     )
